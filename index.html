@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JobShield - Scam Detector</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #111827;
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .input-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .input-card h2 {
+            margin-bottom: 10px;
+            color: #f8fafc;
+        }
+
+        .input-card p {
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #f8fafc;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #38bdf8;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        #analyzeBtn {
+            background: #0284c7;
+            color: white;
+        }
+
+        #analyzeBtn:hover {
+            background: #0369a1;
+        }
+
+        .example-btn {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .example-btn:hover {
+            background: #475569;
+        }
+
+        #results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .score-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-card h2 {
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        #score {
+            font-size: 55px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #risk {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .result-section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .result-section h2 {
+            margin-bottom: 18px;
+            color: #38bdf8;
+        }
+
+        .issue {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .issue strong {
+            font-size: 18px;
+            color: #f8fafc;
+        }
+
+        .issue p {
+            margin-top: 8px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .evidence {
+            margin-top: 12px;
+            padding: 12px;
+            background: #111827;
+            border-left: 4px solid #f59e0b;
+            border-radius: 5px;
+            color: #fbbf24;
+            font-style: italic;
+            word-break: break-word;
+        }
+
+        .url-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .url-card h3 {
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+
+        .url-text {
+            word-break: break-all;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        .url-score {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .check {
+            padding: 7px 0;
+            color: #cbd5e1;
+        }
+
+        #explanationSection {
+            margin-top: 20px;
+            padding: 20px;
+            background: #111827;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            display: none;
+        }
+
+        #explanationSection h3 {
+            margin-bottom: 15px;
+            color: #fbbf24;
+        }
+
+        .explanation-item {
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid #334155;
+        }
+
+        .explanation-item:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation {
+            background: #0f172a;
+            border-left: 4px solid #38bdf8;
+            padding: 18px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #38bdf8;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            header h1 {
+                font-size: 26px;
+            }
+
+            #score {
+                font-size: 45px;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>🛡️ JobShield</h1>
+
+        <p>
+            Job & Internship Scam Risk Detection System
+        </p>
+
+    </header>
+
+
+    <div class="container">
+
+        <div class="input-card">
+
+            <h2>
+                🔍 Check a Job or Internship Message
+            </h2>
+
+            <p>
+                Paste a recruitment message below and JobShield
+                will analyze it for potential scam indicators.
+            </p>
+
+            <textarea
+                id="message"
+                placeholder="Paste your job or internship message here..."
+            ></textarea>
+
+            <div class="button-row">
+
+                <button id="analyzeBtn">
+                    🔍 Analyze Message
+                </button>
+
+                <button
+                    class="example-btn"
+                    onclick="useScamExample()"
+                >
+                    🚨 Try Scam Example
+                </button>
+
+                <button
+                    class="example-btn"
+                    onclick="useSafeExample()"
+                >
+                    ✅ Try Safe Example
+                </button>
+
+                <button
+                    class="example-btn"
+                    onclick="clearMessage()"
+                >
+                    🗑 Clear
+                </button>
+
+            </div>
+
+            <div id="loading">
+                🔄 Analyzing message...
+            </div>
+
+        </div>
+
+
+        <div id="results">
+
+            <div class="score-card">
+
+                <h2>
+                    Risk Score
+                </h2>
+
+                <div id="score">
+                    0/100
+                </div>
+
+                <div id="risk">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <h2>
+                    🚩 Detected Red Flags
+                </h2>
+
+                <div id="issueList"></div>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <h2>
+                    🔗 URL Security Analysis
+                </h2>
+
+                <div id="urlAnalysis"></div>
+
+
+                <div id="explanationSection">
+
+                    <h3>
+                        🧠 Why is this URL suspicious?
+                    </h3>
+
+                    <div id="urlExplanation"></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <h2>
+                    💡 Safety Recommendation
+                </h2>
+
+                <div
+                    id="recommendation"
+                    class="recommendation"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function cleanText(text) {
+
+            if (!text) {
+                return "";
+            }
+
+            return text.replace(
+                /\[([^\]]+)\]\([^)]+\)/g,
+                "$1"
+            );
+
+        }
+
+
+        function escapeHTML(text) {
+
+            if (!text) {
+                return "";
+            }
+
+            const div =
+                document.createElement("div");
+
+            div.textContent = text;
+
+            return div.innerHTML;
+
+        }
+
+
+        document
+            .getElementById("analyzeBtn")
+            .addEventListener(
+                "click",
+                analyzeMessage
+            );
+
+
+        async function analyzeMessage() {
+
+            const message =
+                document
+                    .getElementById("message")
+                    .value
+                    .trim();
+
+
+            if (!message) {
+
+                alert(
+                    "Please enter a job or internship message."
+                );
+
+                return;
+
+            }
+
+
+            document
+                .getElementById("loading")
+                .style.display = "block";
+
+
+            document
+                .getElementById("results")
+                .style.display = "none";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/analyze",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                message: message
+                            })
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server returned an error."
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                document
+                    .getElementById("loading")
+                    .style.display = "none";
+
+
+                document
+                    .getElementById("results")
+                    .style.display = "block";
+
+
+                // SCORE
+
+                document
+                    .getElementById("score")
+                    .textContent =
+                    data.score + "/100";
+
+
+                // RISK
+
+                document
+                    .getElementById("risk")
+                    .textContent =
+                    data.risk;
+
+
+                // RED FLAGS
+
+                const issueList =
+                    document
+                        .getElementById("issueList");
+
+
+                issueList.innerHTML = "";
+
+
+                data.flags.forEach(
+                    flag => {
+
+                        const div =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        div.className = "issue";
+
+
+                        let severityIcon = "⚠️";
+
+
+                        if (
+                            flag.severity === "high"
+                        ) {
+
+                            severityIcon = "🔴";
+
+                        }
+                        else if (
+                            flag.severity === "medium"
+                        ) {
+
+                            severityIcon = "🟠";
+
+                        }
+                        else if (
+                            flag.severity === "low"
+                        ) {
+
+                            severityIcon = "🟢";
+
+                        }
+
+
+                        const title =
+                            escapeHTML(
+                                flag.title
+                            );
+
+
+                        const description =
+                            escapeHTML(
+                                flag.description
+                            );
+
+
+                        const evidence =
+                            escapeHTML(
+                                cleanText(
+                                    flag.evidence
+                                )
+                            );
+
+
+                        div.innerHTML = `
+
+                            <strong>
+                                ${severityIcon}
+                                ${title}
+                            </strong>
+
+                            <p>
+                                ${description}
+                            </p>
+
+                            ${
+                                evidence
+                                ?
+                                `
+                                <div class="evidence">
+                                    🚩 "${evidence}"
+                                </div>
+                                `
+                                :
+                                ""
+                            }
+
+                        `;
+
+
+                        issueList.appendChild(div);
+
+                    }
+                );
+
+
+                // URL ANALYSIS
+
+                const urlContainer =
+                    document
+                        .getElementById(
+                            "urlAnalysis"
+                        );
+
+
+                urlContainer.innerHTML = "";
+
+
+                const explanationSection =
+                    document
+                        .getElementById(
+                            "explanationSection"
+                        );
+
+
+                const urlExplanation =
+                    document
+                        .getElementById(
+                            "urlExplanation"
+                        );
+
+
+                urlExplanation.innerHTML = "";
+
+
+                explanationSection.style.display =
+                    "none";
+
+
+                let explanationsFound = false;
+
+
+                if (
+                    data.url_analysis &&
+                    data.url_analysis.length > 0
+                ) {
+
+
+                    data.url_analysis.forEach(
+                        urlData => {
+
+
+                            let riskIcon = "🟢";
+
+
+                            if (
+                                urlData.risk === "MEDIUM"
+                            ) {
+
+                                riskIcon = "🟡";
+
+                            }
+
+
+                            if (
+                                urlData.risk === "HIGH"
+                            ) {
+
+                                riskIcon = "🔴";
+
+                            }
+
+
+                            if (
+                                urlData.risk === "UNKNOWN"
+                            ) {
+
+                                riskIcon = "⚪";
+
+                            }
+
+
+                            const card =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            card.className =
+                                "url-card";
+
+
+                            let checksHTML = "";
+
+
+                            if (
+                                urlData.checks &&
+                                urlData.checks.length
+                            ) {
+
+                                urlData.checks.forEach(
+                                    check => {
+
+                                        let icon = "✓";
+
+
+                                        if (
+                                            check.status ===
+                                            "warning"
+                                        ) {
+
+                                            icon = "⚠️";
+
+                                        }
+
+
+                                        if (
+                                            check.status ===
+                                            "danger"
+                                        ) {
+
+                                            icon = "🔴";
+
+                                        }
+
+
+                                        checksHTML += `
+
+                                            <div class="check">
+
+                                                ${icon}
+
+                                                ${escapeHTML(
+                                                    check.message
+                                                )}
+
+                                            </div>
+
+                                        `;
+
+                                    }
+                                );
+
+                            }
+
+
+                            const safeURL =
+                                escapeHTML(
+                                    cleanText(
+                                        urlData.url
+                                    )
+                                );
+
+
+                            const safeRisk =
+                                escapeHTML(
+                                    urlData.risk
+                                );
+
+
+                            const safeRecommendation =
+                                escapeHTML(
+                                    urlData.recommendation
+                                );
+
+
+                            card.innerHTML = `
+
+                                <h3>
+                                    🔗 URL Analysis
+                                </h3>
+
+                                <div class="url-text">
+
+                                    <strong>
+                                        URL:
+                                    </strong>
+
+                                    ${safeURL}
+
+                                </div>
+
+                                <div class="url-score">
+
+                                    ${riskIcon}
+
+                                    ${safeRisk}
+
+                                    RISK
+
+                                    <br><br>
+
+                                    URL Risk Score:
+                                    ${urlData.score}/100
+
+                                </div>
+
+                                <div>
+                                    ${checksHTML}
+                                </div>
+
+                                <p
+                                    style="
+                                        margin-top: 15px;
+                                        line-height: 1.5;
+                                        color: #cbd5e1;
+                                    "
+                                >
+
+                                    💡
+
+                                    ${safeRecommendation}
+
+                                </p>
+
+                            `;
+
+
+                            urlContainer.appendChild(
+                                card
+                            );
+
+
+                            // EXPLANATION
+
+                            if (
+                                urlData.explanation &&
+                                urlData.explanation.length > 0
+                            ) {
+
+                                explanationsFound = true;
+
+
+                                urlData.explanation.forEach(
+                                    explanation => {
+
+                                        const item =
+                                            document.createElement(
+                                                "div"
+                                            );
+
+
+                                        item.className =
+                                            "explanation-item";
+
+
+                                        item.innerHTML = `
+
+                                            ⚠️
+
+                                            ${escapeHTML(
+                                                explanation
+                                            )}
+
+                                        `;
+
+
+                                        urlExplanation
+                                            .appendChild(
+                                                item
+                                            );
+
+                                    }
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+                else {
+
+                    urlContainer.innerHTML = `
+
+                        <div class="issue">
+
+                            🟢 No URLs detected
+                            in this message.
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                if (explanationsFound) {
+
+                    explanationSection.style.display =
+                        "block";
+
+                }
+
+
+                // RECOMMENDATION
+
+                document
+                    .getElementById(
+                        "recommendation"
+                    )
+                    .textContent =
+                    data.recommendation;
+
+
+                // SCROLL
+
+                document
+                    .getElementById(
+                        "results"
+                    )
+                    .scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+
+                document
+                    .getElementById("loading")
+                    .style.display = "none";
+
+
+                alert(
+                    "Unable to analyze the message. " +
+                    "Make sure the Flask server is running."
+                );
+
+            }
+
+        }
+
+
+        // SCAM EXAMPLE
+
+        function useScamExample() {
+
+            document
+                .getElementById("message")
+                .value =
+
+                `Congratulations! You have been selected for a work-from-home internship.
+
+Pay ₹2500 registration fee immediately to confirm your position.
+
+Send your Aadhaar, PAN card and bank details.
+
+You can earn ₹75000 per month with no experience.
+
+Limited seats available. Apply today.
+
+Complete your registration at https://bit.ly/internship2026`;
+
+        }
+
+
+        // SAFE EXAMPLE
+
+        function useSafeExample() {
+
+            document
+                .getElementById("message")
+                .value =
+
+                `Dear Candidate,
+
+Thank you for applying for the Software Development Internship at ABC Technologies.
+
+Your application has been shortlisted for a technical interview.
+
+The interview will be conducted online on Monday at 10:00 AM.
+
+The recruitment team will contact you through the official company email provided during your application.
+
+There is no application fee required for the recruitment process.
+
+We look forward to speaking with you.`;
+
+        }
+
+
+        // CLEAR
+
+        function clearMessage() {
+
+            document
+                .getElementById("message")
+                .value = "";
+
+
+            document
+                .getElementById("results")
+                .style.display = "none";
+
+
+            document
+                .getElementById("loading")
+                .style.display = "none";
+
+
+            document
+                .getElementById("explanationSection")
+                .style.display = "none";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
